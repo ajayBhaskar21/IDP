@@ -1,70 +1,49 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
-import { database } from './firebase'; // Adjust the path as needed
-import { ref, get, child, } from 'firebase/database';
+import { database } from './firebase1'; // Adjust the path as needed
+import { ref, get, child } from 'firebase/database';
 
 const SignIn = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false); // State to manage loading
   const navigation = useNavigation();
 
   const handleSignIn = async () => {
-
-    // Test  to fetch the data
-
+    setLoading(true); // Start loading
 
     // Reference to the "users" collection
     const usersRef = ref(database, 'users');
 
-    // Fetch all user data from the "users" collection
-    
-      const usersSnapshot = await get(usersRef);
+    // Fetch all user data from the "users" reference
+    const usersSnapshot = await get(usersRef);
 
-      if (usersSnapshot.exists()) {
-        // Convert the user data to an array
-        const usersArray = [];
-        usersSnapshot.forEach((childSnapshot) => {
-          const user = {
-            id: childSnapshot.key, // The user's unique ID
-            ...childSnapshot.val(), // Other user data (e.g., username, password)
-          };
-          usersArray.push(childSnapshot.val().username);
-        });
-        console.log('userArr = ' + usersArray);
+    if (usersSnapshot.exists()) {
+      let found = false;
+
+      usersSnapshot.forEach((childSnapshot) => {
+        if (childSnapshot.val().username === username && 
+          childSnapshot.val().password === password) {
+          found = true;
+        }
+      });
+
+      if (found) {
+        // Simulate a delay to show loading
+        await setTimeout(() => {
+          setLoading(false); // Stop loading
+          navigation.navigate('Home');
+        }, 2000); // Adjust the delay as needed
       } else {
-        // Handle the case where the "users" collection is empty
-        console.log('No users found.');
-      }
-
-
-
-    /*
-    // Reference to the user in the Firebase Realtime Database
-    const userRef = ref(database, 'users');
-
-    // Check if the user exists in the database
-    const userSnapshot = await get(child(userRef, username));
-    console.log('user snapshot = ' + userSnapshot);
-    console.log('user snapshot val = ' + userSnapshot.val());
-    if (userSnapshot.val() !== null) {
-      // Get the user's password from the database
-      const savedPasswordSnapshot = await get(child(userRef, username, 'password'));
-
-      if (savedPasswordSnapshot.val() !== null && password === savedPasswordSnapshot.val()) {
-        // Successful login, navigate to "Home" screen
-        navigation.navigate('Home');
-      } else {
-        // Failed login, show an error message
-        alert('Invalid username or password');
+        setLoading(false); // Stop loading
+        alert('Incorrect username or password!!!');
       }
     } else {
-      // User does not exist in the database
-      alert('User not found');
+      setLoading(false); // Stop loading
+      console.log('No users found.');
     }
-    */
-
   };
 
   return (
@@ -84,6 +63,18 @@ const SignIn = () => {
         onChangeText={(text) => setPassword(text)}
       />
       <Button title="Sign In" onPress={handleSignIn} />
+
+      {loading ? (
+        <ActivityIndicator size="large" color="white" />
+      ) : (
+        <Text style={styles.switchText}>
+          Don't have an account?{' '}
+          <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+            <Text style={{ fontWeight: 'bold', color: 'white' }}>Register</Text>
+          </TouchableOpacity>
+        </Text>
+      )}
+
     </LinearGradient>
   );
 };
@@ -109,6 +100,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 10,
     padding: 8,
+    color: 'white',
+    borderRadius: 10,
+    maxWidth: 300,
+  },
+  switchText: {
     color: 'white',
   },
 });
