@@ -3,14 +3,41 @@ import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'rea
 import { LinearGradient } from 'expo-linear-gradient';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import * as firebase from 'firebase/app'; // Import Firebase from the Firebase Web SDK
+import { initializeApp } from 'firebase/app';
+import { getDatabase, ref, push } from 'firebase/database';
+
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyBlVPqSK2dGMUX3Iz6lENmhpRzokwDNZg4",
+    authDomain: "idp-1-84f20.firebaseapp.com",
+    projectId: "idp-1-84f20",
+    storageBucket: "idp-1-84f20.appspot.com",
+    messagingSenderId: "377092112075",
+    appId: "1:377092112075:web:d6487bdc04b512efb8a54e"
+  };
+
+
+// Initialize Firebase
+const firebaseApp = initializeApp(firebaseConfig);
 
 const SignUp = ({ navigation }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
+    const database = getDatabase(firebaseApp);
+    const usersRef = ref(database, 'users');
     const handleSignUp = () => {
         // Handle the sign-up logic here (e.g., send data to a server).
         // You can add validation, API calls, or database interactions as needed.
+
+         // Push user data to the Firebase Realtime Database
+        push(usersRef, {
+            username: username,
+            password: password,
+        });
+
         console.log('Username:', username);
         console.log('Password:', password);
         // Clear the input fields
