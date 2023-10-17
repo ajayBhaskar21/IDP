@@ -7,77 +7,23 @@ import * as firebase from 'firebase/app';
 import { initializeApp } from 'firebase/app';
 import { database } from './firebase'; // Adjust the path as needed
 import { ref, push, onValue } from 'firebase/database';
+import SignIn from './SignIn'; // Import the SignIn component
 
 
 
 const SignUp = ({ navigation }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-
-  const usersRef = ref(database, 'users');
-
-  const handleSignUp = () => {
-    // Push user data to the Firebase Realtime Database
-    push(usersRef, {
-      username: username,
-      password: password,
-    });
-
-    console.log('Username:', username);
-    console.log('Password:', password);
-    // Clear the input fields
-    setUsername('');
-    setPassword('');
-  };
-
-  useEffect(() => {
-    const usersListener = onValue(usersRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        console.log('User data in the database:', data);
-      }
-    });
-
-    // Cleanup the listener when the component unmounts
-    return () => {
-      usersListener();
-    };
-  }, []);
-
-  return (
-    <LinearGradient
-      colors={['#3494E6', '#EC6EAD']}
-      style={styles.container}
-    >
-      <Text style={styles.header}>Sign Up</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={(text) => setUsername(text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={(text) => setPassword(text)}
-      />
-      <Button title="Sign Up" onPress={handleSignUp} />
-
-      <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
-        <Text style={styles.switchText}>Already a user? Login</Text>
-      </TouchableOpacity>
-    </LinearGradient>
-  );
-};
-const SignIn = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleSignIn = () => {
-        // Handle the sign-in logic here (e.g., authenticate user).
-        // You can add validation, API calls, or database interactions as needed.
+    const usersRef = ref(database, 'users');
+
+    const handleSignUp = () => {
+        // Push user data to the Firebase Realtime Database
+        push(usersRef, {
+        username: username,
+        password: password,
+        });
+
         console.log('Username:', username);
         console.log('Password:', password);
         // Clear the input fields
@@ -85,29 +31,58 @@ const SignIn = () => {
         setPassword('');
     };
 
+    /*
+    useEffect(() => {
+        const usersListener = onValue(usersRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            console.log('User data in the database:', data);
+        }
+        });
+
+        // Cleanup the listener when the component unmounts
+        return () => {
+        usersListener();
+        };
+    }, []);
+    */
+
     return (
         <LinearGradient
-            colors={['#3494E6', '#EC6EAD']}
-            style={styles.container}
+        colors={['#3494E6', '#EC6EAD']}
+        style={styles.container}
         >
-            <Text style={styles.header}>Sign In</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Username"
-                value={username}
-                onChangeText={(text) => setUsername(text)}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Password"
-                secureTextEntry
-                value={password}
-                onChangeText={(text) => setPassword(text)}
-            />
-            <Button title="Sign In" onPress={handleSignIn} />
+        <Text style={styles.header}>Sign Up</Text>
+        <TextInput
+            style={styles.input}
+            placeholder="Username"
+            value={username}
+            onChangeText={(text) => setUsername(text)}
+        />
+        <TextInput
+            style={styles.input}
+            placeholder="Password"
+            secureTextEntry
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+        />
+        <Button title="Sign Up" onPress={handleSignUp} />
+
+        <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
+            <Text style={styles.switchText}>Already a user? Login</Text>
+        </TouchableOpacity>
         </LinearGradient>
     );
 };
+
+const Home = () => {
+    // Home screen content
+    return (
+      // Your "Welcome to Construction Management App" content
+      // ...
+      <h1>Welcome to Construction Management App</h1>
+    );
+  };
 
 const Stack = createStackNavigator();
 
@@ -116,7 +91,8 @@ const App = () => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="SignUp">
         <Stack.Screen name="SignUp" component={SignUp} />
-        {/* Include your SignIn screen here */}
+        {/* Define the SignIn screen similarly */}
+        {<Stack.Screen name="SignIn" component={SignIn} />}
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -125,27 +101,27 @@ const App = () => {
 export default App;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-  },
-  header: {
-    fontSize: 24,
-    marginBottom: 20,
-    color: 'white',
-  },
-  input: {
-    width: '100%',
-    height: 40,
-    borderColor: 'white',
-    borderWidth: 1,
-    marginBottom: 10,
-    padding: 8,
-    color: 'white',
-  },
-  switchText: {
-    color: 'white',
-  },
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+    },
+    header: {
+        fontSize: 24,
+        marginBottom: 20,
+        color: 'white',
+    },
+    input: {
+        width: '100%',
+        height: 40,
+        borderColor: 'white',
+        borderWidth: 1,
+        marginBottom: 10,
+        padding: 8,
+        color: 'white',
+    },
+    switchText: {
+        color: 'white',
+    },
 });

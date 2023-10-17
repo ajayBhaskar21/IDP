@@ -12,10 +12,10 @@ const firebaseConfig = {
     storageBucket: "idp-1-84f20.appspot.com",
     messagingSenderId: "377092112075",
     appId: "1:377092112075:web:d6487bdc04b512efb8a54e"
-  };
+};
 
 if (!firebaseApp) {
-  firebaseApp = initializeApp(firebaseConfig);
+    firebaseApp = initializeApp(firebaseConfig);
 }
 
 const database = getDatabase(firebaseApp);
