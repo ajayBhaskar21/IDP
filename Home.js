@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const Home = () => {
@@ -24,11 +24,14 @@ const Home = () => {
     },
   ];
 
+  const toggleDropdown = () => {
+    setDropdownOpen(!isDropdownOpen);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Ongoing Work</Text>
 
-      {/* Render ongoing work items here */}
       {ongoingWork.map((work) => (
         <View key={work.id} style={styles.workItem}>
           <Text>{work.task}</Text>
@@ -36,27 +39,30 @@ const Home = () => {
         </View>
       ))}
 
-      {/* Dropdown menu */}
       <TouchableOpacity
         style={styles.dropdown}
-        onPress={() => setDropdownOpen(!isDropdownOpen)} // Toggle dropdown on press
+        onPress={toggleDropdown}
       >
         <Icon name="bars" size={20} style={styles.dropdownIcon} />
-        {isDropdownOpen && ( // Render menu only if the dropdown is open
-          <View style={styles.menu}>
-            <TouchableOpacity>
-              <Text style={styles.menuItem}>Profile</Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Text style={styles.menuItem}>Logout</Text>
-            </TouchableOpacity>
-          </View>
-        )}
       </TouchableOpacity>
+
+      {isDropdownOpen && (
+        <View style={styles.menu}>
+          <TouchableOpacity>
+            <Text style={styles.menuItem}>Profile</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text style={styles.menuItem}>Logout</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
 
+// Styles and export...
+
+export default Home;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -84,13 +90,22 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 5,
     position: 'absolute',
-    top: Platform.OS === 'ios' ? 65 : 45, // Adjust top position as needed
+    top: Platform.OS === 'ios' ? 65 : 45,
     right: 20,
     zIndex: 1,
+    width: 130,
+    height: 100,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   menuItem: {
     padding: 10,
+    fontSize: 18,
+    borderBottomWidth: 1, // Add a bottom border
+    borderColor: '#ccc', // Border color (you can change it to your desired color)
   },
 });
 
-export default Home;
+
