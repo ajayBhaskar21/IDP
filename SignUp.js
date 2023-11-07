@@ -37,12 +37,17 @@ const SignUp = ({ navigation }) => {
         password: password,
         });
 
+        
+
         // console.log('Numeric User ID:', numericUserID);
         console.log('Username:', username);
         console.log('Password:', password);
         // Clear the input fields
         setUsername('');
         setPassword('');
+        // display a successfull message on the screen after data is stored in the database
+        alert("Account created successfully");
+        
     };
     return (
         <LinearGradient
