@@ -32,12 +32,33 @@ const SignUp = ({ navigation }) => {
         // Store user data in the Firebase Realtime Database using the numericUserID
         const newUserRef = ref(usersRef, String(numericUserID)); // Convert to string
         */
+
+        // Reference to the "users" collection
+        const usersRef = ref(database, 'users');
+
+        // Fetch all user data from the "users" reference
+        const usersSnapshot = await get(usersRef);
+    
+        // check if entered username exists or not in the usersSnapshot
+        if (usersSnapshot.exists()) {
+            let found = false;
+            usersSnapshot.forEach((childSnapshot) => {
+                if (childSnapshot.val().username === username) {
+                    found = true;
+                }
+            });
+            if (found) {
+                alert('username already exists!!!');
+                return ;
+            } 
+        } 
+        
+
         await push(usersRef, {
-        username: username,
-        password: password,
+            username: username,
+            password: password,
         });
 
-        
 
         // console.log('Numeric User ID:', numericUserID);
         console.log('Username:', username);
@@ -79,8 +100,8 @@ const SignUp = ({ navigation }) => {
         </TouchableOpacity>
         </Text>
 
-    </LinearGradient>
-  );
+        </LinearGradient>
+    );
 };
 
 
